@@ -1,0 +1,144 @@
+package team14.model;
+
+/**
+ * Strategy class
+ * @author mirafcry
+ * @version 11/24/14
+ *
+ */
+public class StStrategy extends Strategy{
+
+	private String name, action, effect, description;
+	private int id, ghstratID, ghcondID, ghcondVal;
+	
+	/**
+	 * Creates new Strategy
+	 * @param name
+	 * @param action
+	 * @param effect
+	 * @param description
+	 * @param price
+	 * @throws IllegalArgumentException if name, action, effect, and/or description is invalid and/or price is
+	 * less than 0.
+	 */
+	public StStrategy(int id, int ghstratID, int ghcondID, String name, String action, String effect, String description) {
+		super(ghstratID, name, action, effect, description, 0);
+		setID(id);		
+		setName(name);
+		setAction(action);
+		setEffect(effect);
+		setDescription(description);
+		setGhstratID(ghstratID);
+		setGhcondID(ghcondID);
+	}
+	
+	@Override
+	public String toString() {
+		return "Strategy[id=" + getID() + ", name=" + getName() + ", action=" + getAction() + ", effect=" + getEffect() + ", description=" + getDescription() +
+				", price=" + getPrice() + "]";
+	}
+	
+	public int getID() {
+		return id;
+	}
+	
+	private void setID(int id) {
+		if(id < 0) {
+			throw new IllegalArgumentException("Please enter a valid ID.");
+		}
+		this.id = id;
+	}
+	
+	/**
+	 * Returns name
+	 * @return name
+	 */
+	public String getName() {
+		return name;
+	}
+	
+	/**
+	 * Modifies the name of this Strategy
+	 * @param name
+	 */
+	public void setName(String name) {
+		if(name == null || name.length() == 0){
+			throw new IllegalArgumentException("Please supply valid name.");
+		}
+		this.name = name;
+	}
+		
+	/**
+	 * Returns action
+	 * @return action
+	 */
+	public String getAction() {
+		return action;
+	}
+	
+	/**
+	 * Modifies the action for this Strategy
+	 * @param action
+	 */
+	public void setAction(String action) {
+		if(action == null || action.length() == 0) {
+			throw new IllegalArgumentException("Please supply valid action.");
+		}
+		this.action = action;
+	}
+
+	/**
+	 * Returns effect
+	 * @return effect
+	 */
+	public String getEffect() {
+		return effect;
+	}
+	
+	/**
+	 * Modifies effect for this Strategy
+	 * @param effect
+	 */
+	public void setEffect(String effect) {
+		if(effect == null || effect.length() == 0) {
+			throw new IllegalArgumentException("Please supply valid effect.");
+		}
+		this.effect = effect;
+	}
+	
+	/**
+	 * Returns description
+	 * @return description
+	 */
+	public String getDescription() {
+		return description;
+	}
+	
+	/**
+	 * Modifies description for this Strategy
+	 * @param description
+	 */
+	public void setDescription(String description) {
+		if(description == null || description.length() == 0) {
+			throw new IllegalArgumentException("Please supply valid description.");
+		}
+		this.description = description;
+	}
+
+	public int getGhstratID() {
+		return ghstratID;
+	}
+
+	public void setGhstratID(int ghstratID) {
+		this.ghstratID = ghstratID;
+	}
+
+	public int getGhcondID() {
+		return ghcondID;
+	}
+
+	public void setGhcondID(int ghcondID) {
+		this.ghcondID = ghcondID;
+	}	
+	
+}

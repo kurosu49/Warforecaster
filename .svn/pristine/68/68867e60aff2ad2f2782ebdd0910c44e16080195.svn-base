@@ -1,0 +1,314 @@
+package team14.view;
+
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.concurrent.locks.Condition;
+
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.SoftBevelBorder;
+
+import team14.controller.WarForecasterDB;
+import team14.model.ComboItem;
+import team14.model.ConditionGH;
+import team14.model.StStrategy;
+import team14.model.Strategist;
+
+@SuppressWarnings("serial")
+public class StrategyPanel extends JPanel {
+	
+	private GUI myGUI;
+	
+	private JTable tableStrat;
+	
+	private JComboBox comboBoxCond;
+	
+	private List<StStrategy> list;
+	private Object[][] data;
+	
+	private WarForecasterDB db;	
+	
+	private JButton btnSave;
+	
+	private Strategist strategist;
+	
+	private JTextPane textPaneDescription;
+	
+	private JTextPane textPaneEffect;
+	
+	private JTextPane textPaneAction;
+	
+	private List<ConditionGH> condlist;
+	private ConditionGH selectedCond;
+	
+	private ComboItem itemNone = new ComboItem("None", -1);
+	
+	public StrategyPanel(GUI aGUI, Strategist aStrategist, WarForecasterDB adb) {
+		strategist = aStrategist;
+		db = adb;
+		myGUI = aGUI;
+		
+		buildStategyPanel();
+	}
+	
+
+	
+	private void buildStategyPanel() {
+		
+		JPanel panelStratEditor = new JPanel();
+		GridBagLayout gbl_panelStratEditor = new GridBagLayout();
+		gbl_panelStratEditor.columnWidths = new int[]{245, 150, 0};
+		gbl_panelStratEditor.rowHeights = new int[]{0, 0};
+		gbl_panelStratEditor.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		gbl_panelStratEditor.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+		panelStratEditor.setLayout(gbl_panelStratEditor);
+		
+		JScrollPane scrollPaneStratEditor = new JScrollPane();
+		GridBagConstraints gbc_scrollPaneStratEditor = new GridBagConstraints();
+		gbc_scrollPaneStratEditor.fill = GridBagConstraints.BOTH;
+		gbc_scrollPaneStratEditor.insets = new Insets(0, 0, 0, 5);
+		gbc_scrollPaneStratEditor.gridx = 0;
+		gbc_scrollPaneStratEditor.gridy = 0;
+		panelStratEditor.add(scrollPaneStratEditor, gbc_scrollPaneStratEditor);
+		
+		
+		//(int id, int ghstratID, int ghcondID, int ghcondVal, String name, String action, String effect, String description) {
+
+		// Test Data
+		String[] columnNames = {"","","", "Strategy List","","",""};
+		
+		try
+		{
+			list = db.getStStrategyList(strategist.getID());
+			
+			data = new Object[list.size()][columnNames.length];
+			for (int i=0; i<list.size(); i++) {
+				data[i][0] = list.get(i).getID();
+				data[i][1] = list.get(i).getGhstratID();
+				data[i][2] = list.get(i).getGhcondID();
+				data[i][3] = list.get(i).getName();   // the one that will show up
+				data[i][4] = list.get(i).getAction();
+				data[i][5] = list.get(i).getEffect();
+				data[i][6] = list.get(i).getDescription();		
+			}
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		tableStrat = new JTable(data, columnNames);
+		tableStrat.getColumnModel().getColumn(0).setMinWidth(0);
+		tableStrat.getColumnModel().getColumn(0).setMaxWidth(0);
+		tableStrat.getColumnModel().getColumn(1).setMinWidth(0);
+		tableStrat.getColumnModel().getColumn(1).setMaxWidth(0);
+		tableStrat.getColumnModel().getColumn(2).setMinWidth(0);
+		tableStrat.getColumnModel().getColumn(2).setMaxWidth(0);
+		tableStrat.getColumnModel().getColumn(4).setMinWidth(0);
+		tableStrat.getColumnModel().getColumn(4).setMaxWidth(0);
+		tableStrat.getColumnModel().getColumn(5).setMinWidth(0);
+		tableStrat.getColumnModel().getColumn(5).setMaxWidth(0);
+		tableStrat.getColumnModel().getColumn(6).setMinWidth(0);
+		tableStrat.getColumnModel().getColumn(6).setMaxWidth(0);
+
+		scrollPaneStratEditor.setViewportView(tableStrat);
+		
+		JPanel panelStratStatus = new JPanel();
+		panelStratStatus.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
+		GridBagConstraints gbc_panelStratStatus = new GridBagConstraints();
+		gbc_panelStratStatus.fill = GridBagConstraints.BOTH;
+		gbc_panelStratStatus.gridx = 1;
+		gbc_panelStratStatus.gridy = 0;
+		panelStratEditor.add(panelStratStatus, gbc_panelStratStatus);
+		
+		textPaneEffect = new JTextPane();
+		textPaneEffect.setEditable(false);
+		
+		textPaneAction = new JTextPane();
+		textPaneAction.setEditable(false);
+		
+		comboBoxCond = new JComboBox();
+		comboBoxCond.addItem(itemNone);
+		try {
+			condlist = db.getGuildHallConditions();
+			for(ConditionGH cd: condlist) {
+				comboBoxCond.addItem(new ComboItem(cd.getModifier(), cd.getID()));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		comboBoxCond.setSelectedIndex(-1);
+		
+		textPaneDescription = new JTextPane();
+		textPaneDescription.setEditable(false);
+		
+		JLabel lblAction = new JLabel("Action");
+		lblAction.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		lblAction.setHorizontalAlignment(SwingConstants.LEFT);
+		
+		JLabel lblEffect = new JLabel("Effect");
+		lblEffect.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		lblEffect.setHorizontalAlignment(SwingConstants.LEFT);
+		
+		JLabel lblDescription = new JLabel("Description");
+		lblDescription.setHorizontalAlignment(SwingConstants.LEFT);
+		lblDescription.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		
+		btnSave = new JButton("Save");
+		btnSave.setEnabled(false);
+
+		
+		// ACTION
+		tableStrat.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				btnSave.setEnabled(true);
+				
+				textPaneAction.setText("" + tableStrat.getValueAt(tableStrat.getSelectedRow(), 4));
+				textPaneEffect.setText("" + tableStrat.getValueAt(tableStrat.getSelectedRow(), 5));
+				textPaneDescription.setText("" + tableStrat.getValueAt(tableStrat.getSelectedRow(), 6));
+				
+				try {
+					int itemid1 = (int) tableStrat.getValueAt(tableStrat.getSelectedRow(), 2);
+					if (itemid1 > 0) {
+						selectedCond = db.getGuildHallCondition(itemid1);
+						ComboItem citem1 = new ComboItem(selectedCond.getModifier(), selectedCond.getID());
+						comboBoxCond.setSelectedItem(citem1);
+					} else {
+						comboBoxCond.setSelectedItem(itemNone);
+						selectedCond = null;
+					}
+					
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				comboBoxCond.revalidate();
+			}
+		});
+		
+		comboBoxCond.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Object item = comboBoxCond.getSelectedItem();
+				int id = ((ComboItem)item).getValue(); // ID
+				try {
+					if (id == -1) {
+						selectedCond = null;
+					}
+					else {
+						selectedCond = db.getGuildHallCondition(id);
+					}		
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}				
+				comboBoxCond.revalidate();
+			}
+		});
+		
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int condID = -1;
+				if (selectedCond == null) condID = -1;
+				else condID = selectedCond.getID();
+				
+				tableStrat.setValueAt(condID, tableStrat.getSelectedRow(), 2);
+				
+				try {
+					db.updateStStrategy(strategist.getID(), 
+							(int) tableStrat.getValueAt(tableStrat.getSelectedRow(), 0), 
+							condID);
+				} catch (SQLException e2) {
+					e2.printStackTrace();
+				}
+			}
+		});
+		
+		
+		
+		// Group Layout
+		GroupLayout groupLayout = new GroupLayout(this);
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(panelStratEditor, GroupLayout.PREFERRED_SIZE, 561, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(panelStratEditor, GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+
+		GroupLayout gl_panelStratStatus = new GroupLayout(panelStratStatus);
+		gl_panelStratStatus.setHorizontalGroup(
+			gl_panelStratStatus.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelStratStatus.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelStratStatus.createParallelGroup(Alignment.LEADING)
+						.addGroup(Alignment.TRAILING, gl_panelStratStatus.createSequentialGroup()
+							.addComponent(lblDescription, GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+							.addGap(4))
+						.addGroup(Alignment.TRAILING, gl_panelStratStatus.createSequentialGroup()
+							.addGroup(gl_panelStratStatus.createParallelGroup(Alignment.TRAILING)
+								.addComponent(btnSave, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+								.addGroup(gl_panelStratStatus.createSequentialGroup()
+									.addGroup(gl_panelStratStatus.createParallelGroup(Alignment.LEADING)
+										.addComponent(lblAction, GroupLayout.PREFERRED_SIZE, 103, GroupLayout.PREFERRED_SIZE)
+										.addComponent(textPaneAction, GroupLayout.PREFERRED_SIZE, 103, GroupLayout.PREFERRED_SIZE))
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addGroup(gl_panelStratStatus.createParallelGroup(Alignment.TRAILING)
+										.addComponent(textPaneEffect, GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
+										.addComponent(lblEffect, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)))
+								.addComponent(textPaneDescription, GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE))
+							.addContainerGap())
+						.addGroup(gl_panelStratStatus.createSequentialGroup()
+							.addComponent(comboBoxCond, 0, 217, Short.MAX_VALUE)
+							.addContainerGap())))
+		);
+		gl_panelStratStatus.setVerticalGroup(
+			gl_panelStratStatus.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelStratStatus.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelStratStatus.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblAction)
+						.addComponent(lblEffect))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelStratStatus.createParallelGroup(Alignment.LEADING, false)
+						.addComponent(textPaneEffect)
+						.addComponent(textPaneAction, GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE))
+					.addGap(21)
+					.addComponent(comboBoxCond, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addComponent(lblDescription, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(textPaneDescription, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)
+					.addGap(8)
+					.addComponent(btnSave)
+					.addContainerGap())
+		);
+		panelStratStatus.setLayout(gl_panelStratStatus);
+		setLayout(groupLayout);
+	}
+
+}

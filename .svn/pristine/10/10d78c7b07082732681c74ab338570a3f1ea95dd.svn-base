@@ -1,0 +1,11 @@
+package team14.view;
+
+import javax.swing.JFrame;
+
+public class GUIMain extends JFrame {
+	
+	public GUIMain() {
+		//this is crystal! do you see my this??
+	}
+
+}

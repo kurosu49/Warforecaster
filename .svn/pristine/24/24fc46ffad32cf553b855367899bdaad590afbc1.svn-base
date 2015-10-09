@@ -1,0 +1,266 @@
+package team14.view;
+
+import javax.swing.JPanel;
+
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+import java.sql.SQLException;
+import java.util.List;
+
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JTable;
+import javax.swing.JButton;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JScrollPane;
+
+import team14.controller.WarForecasterDB;
+import team14.model.Strategist;
+import team14.model.Strategy;
+import team14.model.Unit;
+
+import javax.swing.ScrollPaneConstants;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+@SuppressWarnings("serial")
+public class GuildhallPanel extends JPanel {
+	
+	private GUI myGUI;
+	
+	private JTable tableBuyUnits;
+	private JTable tableBuyStrat;
+
+	private Object[][] dataUnit;
+	private Object[][] dataStrat;
+	private List<Unit> listUnit;
+	private List<Strategy> listStrat;
+	private Strategist strategist;
+	private WarForecasterDB db;	
+	
+	public GuildhallPanel(GUI aGUI, Strategist aStrategist, WarForecasterDB adb) {
+		strategist = aStrategist;
+		db = adb;
+		myGUI = aGUI;
+		
+		JTabbedPane tabbedPaneGuildHall = new JTabbedPane(JTabbedPane.TOP);
+		
+
+		
+		// Buy Units
+		String[] columnNames1 = {"", "Name", "Class", "Rank", "HP", "Atk", "Def", "Spd", "Price", "Description"};
+		
+		try
+		{
+			listUnit = db.getGuildHallUnits();
+			
+			dataUnit = new Object[listUnit.size()][columnNames1.length];
+			for (int i=0; i<listUnit.size(); i++) {
+				dataUnit[i][0] = listUnit.get(i).getID();
+				dataUnit[i][1] = listUnit.get(i).getName();
+				dataUnit[i][2] = listUnit.get(i).getUnitClass();
+				dataUnit[i][3] = listUnit.get(i).getRank();
+				dataUnit[i][4] = listUnit.get(i).getHP();
+				dataUnit[i][5] = listUnit.get(i).getAtk();
+				dataUnit[i][6] = listUnit.get(i).getDef();
+				dataUnit[i][7] = listUnit.get(i).getSpd();
+				dataUnit[i][8] = listUnit.get(i).getPrice();
+				dataUnit[i][9] = listUnit.get(i).getDescription();		
+			}
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		
+		tableBuyUnits = new JTable(dataUnit, columnNames1);
+		tableBuyUnits.getColumnModel().getColumn(0).setMinWidth(0);
+		tableBuyUnits.getColumnModel().getColumn(0).setMaxWidth(0);
+		tableBuyUnits.getColumnModel().getColumn(1).setMinWidth(100);
+		tableBuyUnits.getColumnModel().getColumn(1).setMaxWidth(100);
+		tableBuyUnits.getColumnModel().getColumn(2).setMinWidth(90);
+		tableBuyUnits.getColumnModel().getColumn(2).setMaxWidth(90);
+		tableBuyUnits.getColumnModel().getColumn(9).setMinWidth(150);
+		tableBuyUnits.getColumnModel().getColumn(9).setMaxWidth(150);
+		
+		
+		JPanel panelBuyUnit = new JPanel();
+		tabbedPaneGuildHall.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=20 marginheight=5> Recruit Units </body></html>", null, panelBuyUnit, null);
+		
+		JButton btnBuyUnit = new JButton("Recruit Unit");
+		
+		// UNIT BUTTON ACTION
+		btnBuyUnit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFrame frame = new JFrame("MSG RECRUIT");
+				
+				int currentBalance = 0;
+				try {
+					currentBalance = db.getRecentBalance(strategist.getID());
+				} catch (SQLException e1) { e1.printStackTrace(); }
+				
+				if (currentBalance >= (int) tableBuyUnits.getValueAt(tableBuyUnits.getSelectedRow(), 8)) {
+					try {
+						db.purchaseUnit((int) tableBuyUnits.getValueAt(tableBuyUnits.getSelectedRow(), 0), strategist.getID());
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}				
+					
+					JOptionPane.showMessageDialog(frame,
+							tableBuyUnits.getValueAt(tableBuyUnits.getSelectedRow(), 1) + 
+							" was successfully recruited!",
+					        "Recruit Success",
+					        JOptionPane.INFORMATION_MESSAGE);
+					myGUI.updateStrategistStatus();
+				} else {
+					JOptionPane.showMessageDialog(frame,
+							"Not enough Ca-Ca-Ca-CASH",
+					        "Recruit Failure",
+					        JOptionPane.INFORMATION_MESSAGE);
+					myGUI.updateStrategistStatus();
+				}
+				
+			}
+		});
+		
+		JScrollPane scrollPaneBuyUnits = new JScrollPane();
+		GroupLayout gl_panelBuyUnit = new GroupLayout(panelBuyUnit);
+		gl_panelBuyUnit.setHorizontalGroup(
+			gl_panelBuyUnit.createParallelGroup(Alignment.TRAILING)
+				.addComponent(scrollPaneBuyUnits, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 556, Short.MAX_VALUE)
+				.addGroup(gl_panelBuyUnit.createSequentialGroup()
+					.addContainerGap(380, Short.MAX_VALUE)
+					.addComponent(btnBuyUnit, GroupLayout.PREFERRED_SIZE, 176, GroupLayout.PREFERRED_SIZE))
+		);
+		gl_panelBuyUnit.setVerticalGroup(
+			gl_panelBuyUnit.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelBuyUnit.createSequentialGroup()
+					.addComponent(scrollPaneBuyUnits, GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnBuyUnit, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE))
+		);
+		
+
+		scrollPaneBuyUnits.setViewportView(tableBuyUnits);
+		panelBuyUnit.setLayout(gl_panelBuyUnit);
+		
+		
+		
+		
+		// Buy Strategy
+		String[] columnNames2 = {"", "Name", "Action", "Effect", "Price", "Description"};
+		
+		try
+		{
+			listStrat = db.getGuildHallStrategies();
+			
+			dataStrat = new Object[listStrat.size()][columnNames2.length];
+			for (int i=0; i<listStrat.size(); i++) {
+				dataStrat[i][0] = listStrat.get(i).getID();
+				dataStrat[i][1] = listStrat.get(i).getName();
+				dataStrat[i][2] = listStrat.get(i).getAction();
+				dataStrat[i][3] = listStrat.get(i).getEffect();
+				dataStrat[i][4] = listStrat.get(i).getPrice();
+				dataStrat[i][5] = listStrat.get(i).getDescription();		
+			}
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		tableBuyStrat = new JTable(dataStrat, columnNames2);
+		tableBuyStrat.getColumnModel().getColumn(0).setMinWidth(0);
+		tableBuyStrat.getColumnModel().getColumn(0).setMaxWidth(0);
+		tableBuyStrat.getColumnModel().getColumn(4).setMinWidth(50);
+		tableBuyStrat.getColumnModel().getColumn(4).setMaxWidth(50);
+		tableBuyStrat.getColumnModel().getColumn(5).setMinWidth(200);
+		tableBuyStrat.getColumnModel().getColumn(5).setMaxWidth(200);
+		
+		JPanel panelBuyStrat = new JPanel();
+		tabbedPaneGuildHall.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=20 marginheight=5> Learn Strategies </body></html>", null, panelBuyStrat, null);
+		
+		JButton btnBuyStrat = new JButton("Learn Strategy");
+
+		// STRATEGY BUTTON ACTION
+		btnBuyStrat.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				JFrame frame = new JFrame("MSG STRAT");
+				
+				int currentBalance = 0;
+				try {
+					currentBalance = db.getRecentBalance(strategist.getID());
+				} catch (SQLException e1) { e1.printStackTrace(); }
+				
+				if (currentBalance >= (int) tableBuyStrat.getValueAt(tableBuyStrat.getSelectedRow(), 4)) {
+					try {
+						db.purchaseStrategy((int) tableBuyStrat.getValueAt(tableBuyStrat.getSelectedRow(), 0), strategist.getID());
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}				
+					
+					JOptionPane.showMessageDialog(frame,
+							tableBuyStrat.getValueAt(tableBuyStrat.getSelectedRow(), 1) + 
+							" was successfully learned!",
+					        "Learn Success",
+					        JOptionPane.INFORMATION_MESSAGE);
+					myGUI.updateStrategistStatus();
+				} else {
+					JOptionPane.showMessageDialog(frame,
+							"Not enough Ca-Ca-Ca-CASH",
+					        "Learn Failure",
+					        JOptionPane.INFORMATION_MESSAGE);
+					myGUI.updateStrategistStatus();
+				}
+			}
+		});
+		
+		JScrollPane scrollPaneBuyStrat = new JScrollPane();
+		GroupLayout gl_panelBuyStrat = new GroupLayout(panelBuyStrat);
+		gl_panelBuyStrat.setHorizontalGroup(
+			gl_panelBuyStrat.createParallelGroup(Alignment.LEADING)
+				.addComponent(scrollPaneBuyStrat, GroupLayout.DEFAULT_SIZE, 556, Short.MAX_VALUE)
+				.addGroup(Alignment.TRAILING, gl_panelBuyStrat.createSequentialGroup()
+					.addContainerGap(379, Short.MAX_VALUE)
+					.addComponent(btnBuyStrat, GroupLayout.PREFERRED_SIZE, 177, GroupLayout.PREFERRED_SIZE))
+		);
+		gl_panelBuyStrat.setVerticalGroup(
+			gl_panelBuyStrat.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelBuyStrat.createSequentialGroup()
+					.addComponent(scrollPaneBuyStrat, GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnBuyStrat, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE))
+		);
+		
+		
+		scrollPaneBuyStrat.setViewportView(tableBuyStrat);
+		panelBuyStrat.setLayout(gl_panelBuyStrat);
+		
+		
+		// GROUP LAYOUT		
+		GroupLayout groupLayout = new GroupLayout(this);
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(tabbedPaneGuildHall, GroupLayout.PREFERRED_SIZE, 561, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addComponent(tabbedPaneGuildHall, GroupLayout.PREFERRED_SIZE, 326, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap())
+		);
+		setLayout(groupLayout);
+	}
+
+}

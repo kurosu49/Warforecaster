@@ -1,0 +1,40 @@
+package team14.model;
+
+public class Strategist {
+	
+	private String name, username, password;
+	private int level, exp, balance;
+	
+	/**
+	 * Constructor
+	 */
+	public Strategist(String name, String username, String password, int level,
+			int exp, int balance) {
+		
+	}
+	
+	public void setName() {
+		
+	}
+	
+	public void setUsername() {
+		
+	}
+	
+	public void setPassword() {
+		
+	}
+	
+	public void setLevel() {
+		
+	}
+	
+	public void setExp() {
+		
+	}
+	
+	public void setBalance() {
+		
+	}
+
+}

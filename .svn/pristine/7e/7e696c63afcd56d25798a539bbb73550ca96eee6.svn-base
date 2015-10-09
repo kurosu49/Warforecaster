@@ -1,0 +1,14 @@
+package team14.model;
+
+public class Strategy {
+	
+	private String name, modifier;
+	private int price;
+	
+	public Strategy() {
+		
+	}
+
+	
+	
+}

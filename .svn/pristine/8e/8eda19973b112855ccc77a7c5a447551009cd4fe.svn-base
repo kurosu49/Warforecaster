@@ -1,0 +1,61 @@
+package team14.model;
+
+
+import java.sql.SQLException;
+import java.util.List;
+
+import team14.controller.WarForecasterDB;
+
+public class Test {
+
+	public static void main(String args[]) throws SQLException {
+		WarForecasterDB db = new WarForecasterDB();
+		System.out.println("-----Getting GH Units-----");
+		
+		//testing out getGuildHallUnits
+		List<Unit> list = db.getGuildHallUnits();
+		for(Unit unit: list) {
+			System.out.println(unit.toString());
+		}
+		
+		System.out.println("-----Getting GH Strategies-----");
+		
+		//testing out getGuildHallStrategies
+		List<Strategy> list2 = db.getGuildHallStrategies();
+		for(Strategy strtgy: list2) {
+			System.out.println(strtgy.toString());		}
+		
+		System.out.println("-----Getting GH Equipment-----");
+		List<Equipment> list3 = db.getGuildHallEquipment();
+		for(Equipment e: list3) {
+			System.out.println(e.toString());
+		}
+		
+		System.out.println("-----Getting GH Conditions-----");
+		List<Condition> list4 = db.getGuildHallConditions();
+		for(Condition c: list4) {
+			System.out.println(c.toString());
+		}
+		
+		
+		System.out.println("-----Getting Tournaments-----");
+		List<Tournament> list5 = db.getTournaments();
+		for(Tournament t: list5) {
+			System.out.println(t.toString());
+		}
+		
+		System.out.println("-----Getting Strategists-----");
+		List<Strategist> list6 = db.getStrategists();
+		for(Strategist t: list6) {
+			System.out.println(t.toString());
+		}
+		
+		System.out.println("-----Getting Strategists-----");
+		List<StUnit> list7 = db.getStUnits(1);
+		for(StUnit t: list7) {
+			System.out.println(t.toString());
+		}
+		
+		
+	}
+}

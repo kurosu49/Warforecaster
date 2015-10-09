@@ -1,0 +1,11 @@
+package team14.model;
+
+public class Strategy {
+	
+	public Strategy() {
+		
+	}
+
+	
+	
+}

@@ -1,0 +1,123 @@
+package team14.model;
+
+/**
+ * Equipment class
+ * @author mirafcry
+ * @version 11/24/14
+ */
+public class Equipment {
+
+	private String name, boost, description;
+	private int id, price;
+	
+	/**
+	 * Creates new Equipment
+	 * @param name
+	 * @param boost
+	 * @param description
+	 * @param price
+	 * @throws IllegalArgumentException if name, boost, and/or description is invalid and/or
+	 * price is less than 0.
+	 */
+	public Equipment(int id, String name, String boost, String description, int price) {
+		setID(id);
+		setName(name);
+		setBoost(boost);
+		setDescription(description);
+		setPrice(price);
+	}
+	
+	@Override
+	public String toString() {
+		return "Equipment[id=" + getID() + ", name=" + getName() + ", boost=" + getBoost() + ", description=" + getDescription() +
+				", price=" + getPrice() + "]";
+	}
+	
+	public int getID() {
+		return id;
+	}
+	
+	private void setID(int id) {
+		if(id < 0) {
+			throw new IllegalArgumentException("Please enter a valid ID.");
+		}
+		this.id = id;
+	}
+	
+	/**
+	 * Returns name
+	 * @return name
+	 */
+	public String getName() {
+		return name;
+	}
+	
+	/**
+	 * Modifies the name of this Equipment
+	 * @param name
+	 */
+	public void setName(String name) {
+		if(name == null || name.length() == 0){
+			throw new IllegalArgumentException("Please supply valid name.");
+		}
+		this.name = name;
+	}
+		
+	/**
+	 * Returns boost
+	 * @return boost
+	 */
+	public String getBoost() {
+		return boost;
+	}
+	
+	/**
+	 * Modifies the action for this Strategy
+	 * @param action
+	 */
+	public void setBoost(String boost) {
+		if(boost == null || boost.length() == 0) {
+			throw new IllegalArgumentException("Please supply valid boost.");
+		}
+		this.boost = boost;
+	}
+
+	
+	/**
+	 * Returns description
+	 * @return description
+	 */
+	public String getDescription() {
+		return description;
+	}
+	
+	/**
+	 * Modifies description for this Equipment
+	 * @param description
+	 */
+	public void setDescription(String description) {
+		if(description == null || description.length() == 0) {
+			throw new IllegalArgumentException("Please supply valid description.");
+		}
+		this.description = description;
+	}
+	
+	/**
+	 * Returns price.
+	 * @return price.
+	 */
+	public int getPrice() {
+		return price;
+	}
+	
+	/**
+	 * Modifies price for this Equipment.
+	 * @param price
+	 */
+	public void setPrice(int price) {
+		if(price < 0) {
+			throw new IllegalArgumentException("Please supply a price greater than or equal to 0");
+		}
+		this.price = price;
+	}
+}

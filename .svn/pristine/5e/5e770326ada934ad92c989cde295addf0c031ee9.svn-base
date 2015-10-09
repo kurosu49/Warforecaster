@@ -1,0 +1,11 @@
+package team14.view;
+
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+
+public class GuildhallPanel extends JPanel {
+	public GuildhallPanel() {
+		setLayout(new BorderLayout(0, 0));
+	}
+
+}

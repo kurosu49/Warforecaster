@@ -1,0 +1,160 @@
+package team14.view;
+
+import javax.swing.JPanel;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+
+import java.awt.ScrollPane;
+
+import javax.swing.JTabbedPane;
+
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+
+import javax.swing.JTable;
+
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.BevelBorder;
+
+import java.awt.GridLayout;
+
+import javax.swing.JLabel;
+import javax.swing.JComboBox;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+
+@SuppressWarnings("serial")
+public class UnitPanel extends JPanel {
+	
+	private GUI myGUI;
+	
+	private JComboBox comboBoxEquip;
+	
+	private JComboBox comboBoxStrategy;
+	
+	private JComboBox comboBoxSquad;
+	
+	private JTable tableUnits;
+	
+	
+	
+	public UnitPanel(GUI aGUI) {
+		myGUI = aGUI;
+		
+		buildUnitPanel();
+	}
+	
+	private void buildUnitPanel() {
+		JTabbedPane tabbedPaneUnit = new JTabbedPane(JTabbedPane.TOP);
+		
+		JPanel panelUnitEditor = new JPanel();
+		tabbedPaneUnit.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5> Unit Editor </body></html>", null, panelUnitEditor, "Cabbage");
+
+		JPanel panelSquadEditor = new JPanel();
+		tabbedPaneUnit.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5> Squad Editor </body></html>", null, panelSquadEditor, null);
+		
+		
+		
+		
+	
+		
+		GridBagLayout gbl_panelUnitEditor = new GridBagLayout();
+		gbl_panelUnitEditor.columnWidths = new int[]{360, 199, 0};
+		gbl_panelUnitEditor.rowHeights = new int[]{0, 0};
+		gbl_panelUnitEditor.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		gbl_panelUnitEditor.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+		panelUnitEditor.setLayout(gbl_panelUnitEditor);
+		
+		JScrollPane scrollPaneTable = new JScrollPane();
+		GridBagConstraints gbc_scrollPaneTable = new GridBagConstraints();
+		gbc_scrollPaneTable.insets = new Insets(0, 0, 0, 5);
+		gbc_scrollPaneTable.fill = GridBagConstraints.BOTH;
+		gbc_scrollPaneTable.gridx = 0;
+		gbc_scrollPaneTable.gridy = 0;
+		panelUnitEditor.add(scrollPaneTable, gbc_scrollPaneTable);
+		
+		
+		// Test Data
+		String[] columnNames = {"Name", "Class", "Rank", "HP", "Atk", "Def", "Spd"};
+		
+		Object[][] rfpData = {
+				
+			    {"Saber", "Knight", 4, 50, 35, 40, 15}, 
+			    {"Chrom", "Lord", 3, 40, 30, 20, 30}
+			    
+				};
+		
+		
+		tableUnits = new JTable(rfpData, columnNames);
+		scrollPaneTable.setViewportView(tableUnits);
+		
+		JPanel panelUnitStatus = new JPanel();
+		panelUnitStatus.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
+		GridBagConstraints gbc_panelUnitStatus = new GridBagConstraints();
+		gbc_panelUnitStatus.fill = GridBagConstraints.BOTH;
+		gbc_panelUnitStatus.gridx = 1;
+		gbc_panelUnitStatus.gridy = 0;
+		panelUnitEditor.add(panelUnitStatus, gbc_panelUnitStatus);
+		
+		comboBoxEquip = new JComboBox();
+		
+		comboBoxStrategy = new JComboBox();
+		
+		comboBoxSquad = new JComboBox();
+		
+		JTextPane textPaneDesc = new JTextPane();
+		textPaneDesc.setEditable(false);
+		
+		
+		
+		// LAYOUTS
+		
+		GroupLayout gl_panelUnitStatus = new GroupLayout(panelUnitStatus);
+		gl_panelUnitStatus.setHorizontalGroup(
+			gl_panelUnitStatus.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelUnitStatus.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelUnitStatus.createParallelGroup(Alignment.TRAILING)
+						.addComponent(textPaneDesc, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+						.addComponent(comboBoxEquip, Alignment.LEADING, 0, 142, Short.MAX_VALUE)
+						.addComponent(comboBoxStrategy, Alignment.LEADING, 0, 142, Short.MAX_VALUE)
+						.addComponent(comboBoxSquad, 0, 142, Short.MAX_VALUE))
+					.addContainerGap())
+		);
+		gl_panelUnitStatus.setVerticalGroup(
+			gl_panelUnitStatus.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelUnitStatus.createSequentialGroup()
+					.addContainerGap(93, Short.MAX_VALUE)
+					.addComponent(comboBoxEquip, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(comboBoxStrategy, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(comboBoxSquad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addComponent(textPaneDesc, GroupLayout.PREFERRED_SIZE, 91, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap())
+		);
+		panelUnitStatus.setLayout(gl_panelUnitStatus);
+		
+		GroupLayout groupLayout = new GroupLayout(this);
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(tabbedPaneUnit, GroupLayout.PREFERRED_SIZE, 562, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(tabbedPaneUnit, GroupLayout.PREFERRED_SIZE, 329, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
+		setLayout(groupLayout);
+	}
+}

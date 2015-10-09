@@ -1,0 +1,343 @@
+package team14.view;
+
+import javax.swing.JFrame;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JPanel;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JButton;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.LineBorder;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Toolkit;
+
+import javax.swing.JList;
+import javax.swing.JTable;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+
+import java.awt.Font;
+import java.sql.SQLException;
+
+import team14.controller.WarForecasterDB;
+import team14.model.Strategist;
+
+@SuppressWarnings("serial")
+public class GUI extends JFrame {
+
+	private UnitPanel myUnitPanel;
+	private GuildhallPanel myGuildhallPanel;
+	private StrategyPanel myStrategyPanel;	
+	private StrategistPanel myStrategistPanel;	
+	private LoginPanel myLoginPanel;
+
+	private JPanel panelCurrent;
+	
+	private JLabel lblStrategistName;
+	
+	private JLabel lblStrategistInfo;
+	
+	private Strategist loggedStrategist;
+	
+	private JButton btnLogout;
+	private JButton btnMenuHome;	
+	private JButton btnMenuTroop;	
+	private JButton btnMenuStrategy;	
+	private JButton btnMenuGuildhall;	
+	private JButton btnMenuTournament;
+	
+	private WarForecasterDB db;
+
+	public GUI() {
+		db = new WarForecasterDB();
+		myLoginPanel = new LoginPanel(this, db);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		buildGUIMain();
+	}
+
+	/**
+	 * The Login Scenario. This method does the following:
+	 * Shows the Logout Button, set logged Strategist, 
+	 * and sets the Labels logged Strategist's info
+	 * @param aStrategist
+	 */
+	public void loginSuccess(Strategist aStrategist) {		
+		loggedStrategist = aStrategist;
+		
+		myStrategistPanel = new StrategistPanel(this, loggedStrategist, db);
+	
+		btnLogout.setVisible(true);
+		
+		lblStrategistName.setText("Welcome, " + loggedStrategist.getUsername());
+		lblStrategistName.revalidate();
+		lblStrategistName.repaint();
+		
+		lblStrategistInfo.setText("Lvl: " + loggedStrategist.getLevel() + 
+				", Cash: " + loggedStrategist.getBalance());
+		lblStrategistInfo.revalidate();
+		lblStrategistInfo.repaint();
+		
+		toggleMenuButtons(true);				
+	}
+	
+	/**
+	 * The Logout Scenario. This method does the following:
+	 * Hides the Logout Button, clears the logged Strategist, 
+	 * and resets the Labels to new user
+	 */
+	public void logoutSuccess() {
+		btnLogout.setVisible(false);
+		loggedStrategist = null;
+
+		lblStrategistName.setText("Hello, New User!");
+		lblStrategistName.revalidate();
+		lblStrategistName.repaint();
+		
+		lblStrategistInfo.setText("");
+		lblStrategistInfo.revalidate();
+		lblStrategistInfo.repaint();
+		
+		toggleMenuButtons(false);
+	}
+	
+	/**
+	 * This method toggles the status of the Menu Buttons
+	 * @param bool
+	 */
+	private void toggleMenuButtons(boolean bool) {
+		btnMenuHome.setEnabled(bool);
+		btnMenuTroop.setEnabled(bool);
+		btnMenuStrategy.setEnabled(bool);
+		btnMenuGuildhall.setEnabled(bool);
+		btnMenuTournament.setEnabled(bool);		
+	}
+	
+	public void panelToLoginPanel() {
+		if (panelCurrent.getComponentCount() != 0)
+			panelCurrent.remove(panelCurrent.getComponent(0));
+		panelCurrent.add(myLoginPanel);
+		panelCurrent.revalidate();
+		panelCurrent.repaint();
+	}
+	
+	public void panelToStrageistPanel() {
+		if (panelCurrent.getComponentCount() != 0)
+			panelCurrent.remove(panelCurrent.getComponent(0));
+		panelCurrent.add(myStrategistPanel);
+		panelCurrent.revalidate();
+		panelCurrent.repaint();
+	}
+	
+	public void panelToUnitPanel() {
+		myUnitPanel = new UnitPanel(this, loggedStrategist, db);
+
+		if (panelCurrent.getComponentCount() != 0)
+			panelCurrent.remove(panelCurrent.getComponent(0));
+		panelCurrent.add(myUnitPanel);
+		panelCurrent.revalidate();
+		panelCurrent.repaint();
+	}
+
+	public void panelToGuildhallPanel() {
+		myGuildhallPanel = new GuildhallPanel(this);
+	
+		
+		if (panelCurrent.getComponentCount() != 0)
+			panelCurrent.remove(panelCurrent.getComponent(0));
+		panelCurrent.add(myGuildhallPanel);
+		panelCurrent.revalidate();
+		panelCurrent.repaint();
+	}
+
+	public void panelToStrategyPanel() {
+		myStrategyPanel = new StrategyPanel(this);
+		
+		if (panelCurrent.getComponentCount() != 0)
+			panelCurrent.remove(panelCurrent.getComponent(0));
+		panelCurrent.add(myStrategyPanel);
+		panelCurrent.revalidate();
+		panelCurrent.repaint();
+	}
+
+	/**
+	 * This method builds the Main GUI
+	 */
+	private void buildGUIMain() {
+		setTitle("War Forecaster");
+		setPreferredSize(new Dimension(800, 500));
+
+		JPanel panelMenu = new JPanel();
+
+		GridBagLayout gbl_panelMenu = new GridBagLayout();
+		gbl_panelMenu.columnWidths = new int[] { 170, 38, 0 };
+		gbl_panelMenu.rowHeights = new int[] { 50, 50, 50, 50, 50, 0 };
+		gbl_panelMenu.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
+		gbl_panelMenu.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0,
+				Double.MIN_VALUE };
+		panelMenu.setLayout(gbl_panelMenu);
+
+		panelCurrent = new JPanel();
+		panelCurrent.setBorder(null);
+		panelCurrent.add(myLoginPanel);
+
+		JPanel panelUserInfo = new JPanel();
+		panelUserInfo.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+
+
+		GridBagLayout gbl_panelUserInfo = new GridBagLayout();
+		gbl_panelUserInfo.columnWidths = new int[] { 0, 0 };
+		gbl_panelUserInfo.rowHeights = new int[] { 30, 30, 30, 1, 0 };
+		gbl_panelUserInfo.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
+		gbl_panelUserInfo.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		panelUserInfo.setLayout(gbl_panelUserInfo);
+		
+		lblStrategistName = new JLabel("Hello, New User!");
+		lblStrategistName.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		GridBagConstraints gbc_lblStrategistName = new GridBagConstraints();
+		gbc_lblStrategistName.insets = new Insets(0, 0, 5, 0);
+		gbc_lblStrategistName.gridx = 0;
+		gbc_lblStrategistName.gridy = 0;
+		panelUserInfo.add(lblStrategistName, gbc_lblStrategistName);
+		
+		lblStrategistInfo = new JLabel("");
+		GridBagConstraints gbc_lblStrategistInfo = new GridBagConstraints();
+		gbc_lblStrategistInfo.insets = new Insets(0, 0, 5, 0);
+		gbc_lblStrategistInfo.gridx = 0;
+		gbc_lblStrategistInfo.gridy = 1;
+		panelUserInfo.add(lblStrategistInfo, gbc_lblStrategistInfo);
+
+		btnLogout = new JButton("Logout");
+		
+		GridBagConstraints gbc_btnLogout = new GridBagConstraints();
+		gbc_btnLogout.insets = new Insets(0, 0, 5, 0);
+		gbc_btnLogout.anchor = GridBagConstraints.NORTH;
+		gbc_btnLogout.gridx = 0;
+		gbc_btnLogout.gridy = 2;
+		panelUserInfo.add(btnLogout, gbc_btnLogout);
+		btnLogout.setVisible(false);
+		
+		btnMenuHome = new JButton("Home");
+
+		GridBagConstraints gbc_btnMenuHome = new GridBagConstraints();
+		gbc_btnMenuHome.fill = GridBagConstraints.BOTH;
+		gbc_btnMenuHome.insets = new Insets(0, 0, 5, 5);
+		gbc_btnMenuHome.gridx = 0;
+		gbc_btnMenuHome.gridy = 0;
+		panelMenu.add(btnMenuHome, gbc_btnMenuHome);
+
+		btnMenuTroop = new JButton("Troops");
+
+		GridBagConstraints gbc_btnMenuTroop = new GridBagConstraints();
+		gbc_btnMenuTroop.fill = GridBagConstraints.BOTH;
+		gbc_btnMenuTroop.insets = new Insets(0, 0, 5, 5);
+		gbc_btnMenuTroop.gridx = 0;
+		gbc_btnMenuTroop.gridy = 1;
+
+		panelMenu.add(btnMenuTroop, gbc_btnMenuTroop); // add button Troop
+
+		btnMenuStrategy = new JButton("Strategies");
+
+		GridBagConstraints gbc_btnMenuStrategy = new GridBagConstraints();
+		gbc_btnMenuStrategy.fill = GridBagConstraints.BOTH;
+		gbc_btnMenuStrategy.insets = new Insets(0, 0, 5, 5);
+		gbc_btnMenuStrategy.gridx = 0;
+		gbc_btnMenuStrategy.gridy = 2;
+		
+		panelMenu.add(btnMenuStrategy, gbc_btnMenuStrategy); // add button
+															// Strategy	
+		btnMenuGuildhall = new JButton("Guild Hall");
+
+		GridBagConstraints gbc_btnMenuGuildhall = new GridBagConstraints();
+		gbc_btnMenuGuildhall.fill = GridBagConstraints.BOTH;
+		gbc_btnMenuGuildhall.insets = new Insets(0, 0, 5, 5);
+		gbc_btnMenuGuildhall.gridx = 0;
+		gbc_btnMenuGuildhall.gridy = 3;
+
+		panelMenu.add(btnMenuGuildhall, gbc_btnMenuGuildhall); // add button
+																// Guildhall
+		btnMenuTournament = new JButton("Tournaments");
+
+		GridBagConstraints gbc_btnMenuTournament = new GridBagConstraints();
+		gbc_btnMenuTournament.insets = new Insets(0, 0, 0, 5);
+		gbc_btnMenuTournament.fill = GridBagConstraints.BOTH;
+		gbc_btnMenuTournament.gridx = 0;
+		gbc_btnMenuTournament.gridy = 4;
+
+		panelMenu.add(btnMenuTournament, gbc_btnMenuTournament); // add button
+																	// Tournament
+		
+		
+		toggleMenuButtons(false);
+		
+		// BUTTON ACTIONS
+		btnMenuHome.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				panelToStrageistPanel();
+			}
+		});
+		
+		btnMenuTroop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				panelToUnitPanel();
+			}
+		});
+
+		btnMenuStrategy.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panelToStrategyPanel();
+			}
+		});
+
+		btnMenuGuildhall.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panelToGuildhallPanel();
+			}
+		});
+		
+		btnLogout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				panelToLoginPanel();
+				logoutSuccess();
+			}
+		});
+		
+		
+		// Main Group Layout of the Page
+		GroupLayout groupLayout = new GroupLayout(getContentPane());
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+						.addComponent(panelUserInfo, GroupLayout.PREFERRED_SIZE, 183, GroupLayout.PREFERRED_SIZE)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(panelMenu, GroupLayout.PREFERRED_SIZE, 127, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(panelCurrent, GroupLayout.DEFAULT_SIZE, 581, Short.MAX_VALUE)))
+					.addContainerGap())
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(panelUserInfo, GroupLayout.PREFERRED_SIZE, 85, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(panelCurrent, GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
+						.addComponent(panelMenu, GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE))
+					.addContainerGap())
+		);
+		getContentPane().setLayout(groupLayout);
+	}
+}

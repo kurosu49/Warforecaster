@@ -1,0 +1,63 @@
+package team14.model;
+
+/**
+ * Condition class
+ * @author mirafcry
+ * @version 11/24/14
+ *
+ */
+public class Condition {
+	
+	private String modifier;
+	private int price; 
+	
+	/**
+	 * Creates new Condition.
+	 * @param modifier
+	 * @param price
+	 * @throws IllegalArgumentException if modifier is invalid and/or price is less than 0.
+	 */
+	public Condition(String modifier, int price) {
+		setModifier(modifier);
+		setPrice(price);
+	}
+	
+	/**
+	 * Returns modifier.
+	 * @return modifier
+	 */
+	public String getModifier() {
+		return modifier;
+	}
+	
+	/**
+	 * Modifies modifier for the Condition.
+	 * @param modifier
+	 */
+	public void setModifier(String modifier) {
+		if(modifier == null || modifier.length() == 0) {
+			throw new IllegalArgumentException("Please supply valid modifier.");
+		}
+		this.modifier = modifier;
+	}
+	
+	/**
+	 * Returns price.
+	 * @return price.
+	 */
+	public int getPrice() {
+		return price;
+	}
+	
+	/**
+	 * Modifies price for the Condition.
+	 * @param price
+	 */
+	public void setPrice(int price) {
+		if(price < 0) {
+			throw new IllegalArgumentException("Please supply a price greater than or equal to 0");
+		}
+		this.price = price;
+	}
+	
+}

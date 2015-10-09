@@ -1,0 +1,181 @@
+package team14.view;
+
+import javax.swing.JPanel;
+
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+
+import javax.swing.BoxLayout;
+import javax.swing.JTabbedPane;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JTable;
+import javax.swing.JButton;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JScrollPane;
+
+@SuppressWarnings("serial")
+public class GuildhallPanel extends JPanel {
+	
+	private GUI myGUI;
+	
+	private JTable tableBuyUnits;
+	private JTable tableBuyStrat;
+	private JTable tableBuyCond;
+	private JTable tableBuyEquip;
+	
+	
+	public GuildhallPanel(GUI aGUI) {
+		myGUI = aGUI;
+		
+		JTabbedPane tabbedPaneGuildHall = new JTabbedPane(JTabbedPane.TOP);
+		
+		// Test Data
+		String[] columnNames = {"Name", "Class", "Rank", "HP", "Atk", "Def", "Spd"};
+		
+		Object[][] rfpData = {
+				
+			    {"Stranger", "Villager", 1, 10, 10, 10, 10},
+			    {"Buddy", "Villager", 1, 10, 10, 10, 10}
+			    
+				};
+		
+		// Buy Units
+		JPanel panelBuyUnit = new JPanel();
+		tabbedPaneGuildHall.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=8 marginheight=5> Recruit Units </body></html>", null, panelBuyUnit, null);
+		
+		JButton btnBuyUnit = new JButton("Recruit Unit");
+		
+		JScrollPane scrollPaneBuyUnits = new JScrollPane();
+		GroupLayout gl_panelBuyUnit = new GroupLayout(panelBuyUnit);
+		gl_panelBuyUnit.setHorizontalGroup(
+			gl_panelBuyUnit.createParallelGroup(Alignment.TRAILING)
+				.addComponent(scrollPaneBuyUnits, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 556, Short.MAX_VALUE)
+				.addGroup(gl_panelBuyUnit.createSequentialGroup()
+					.addContainerGap(380, Short.MAX_VALUE)
+					.addComponent(btnBuyUnit, GroupLayout.PREFERRED_SIZE, 176, GroupLayout.PREFERRED_SIZE))
+		);
+		gl_panelBuyUnit.setVerticalGroup(
+			gl_panelBuyUnit.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelBuyUnit.createSequentialGroup()
+					.addComponent(scrollPaneBuyUnits, GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnBuyUnit, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE))
+		);
+		
+		tableBuyUnits = new JTable(rfpData, columnNames);
+		scrollPaneBuyUnits.setViewportView(tableBuyUnits);
+		panelBuyUnit.setLayout(gl_panelBuyUnit);
+		
+		
+		
+		
+		// Buy Strategy
+		JPanel panelBuyStrat = new JPanel();
+		tabbedPaneGuildHall.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=8 marginheight=5> Learn Strategies </body></html>", null, panelBuyStrat, null);
+		
+		JButton btnBuyStrat = new JButton("Learn Strategy");
+		
+		JScrollPane scrollPaneBuyStrat = new JScrollPane();
+		GroupLayout gl_panelBuyStrat = new GroupLayout(panelBuyStrat);
+		gl_panelBuyStrat.setHorizontalGroup(
+			gl_panelBuyStrat.createParallelGroup(Alignment.LEADING)
+				.addComponent(scrollPaneBuyStrat, GroupLayout.DEFAULT_SIZE, 556, Short.MAX_VALUE)
+				.addGroup(Alignment.TRAILING, gl_panelBuyStrat.createSequentialGroup()
+					.addContainerGap(379, Short.MAX_VALUE)
+					.addComponent(btnBuyStrat, GroupLayout.PREFERRED_SIZE, 177, GroupLayout.PREFERRED_SIZE))
+		);
+		gl_panelBuyStrat.setVerticalGroup(
+			gl_panelBuyStrat.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelBuyStrat.createSequentialGroup()
+					.addComponent(scrollPaneBuyStrat, GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnBuyStrat, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE))
+		);
+		
+		tableBuyStrat = new JTable(rfpData, columnNames);
+		scrollPaneBuyStrat.setViewportView(tableBuyStrat);
+		panelBuyStrat.setLayout(gl_panelBuyStrat);
+		
+		
+		
+		
+		// Buy Condition
+		JPanel panelBuyCond = new JPanel();
+		tabbedPaneGuildHall.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=8 marginheight=5> Study Conditions </body></html>", null, panelBuyCond, null);
+		
+		JButton btnBuyCond = new JButton("Study Condition");
+		
+		JScrollPane scrollPaneBuyCond = new JScrollPane();
+		GroupLayout gl_panelBuyCond = new GroupLayout(panelBuyCond);
+		gl_panelBuyCond.setHorizontalGroup(
+			gl_panelBuyCond.createParallelGroup(Alignment.LEADING)
+				.addComponent(scrollPaneBuyCond, GroupLayout.DEFAULT_SIZE, 556, Short.MAX_VALUE)
+				.addGroup(Alignment.TRAILING, gl_panelBuyCond.createSequentialGroup()
+					.addContainerGap(380, Short.MAX_VALUE)
+					.addComponent(btnBuyCond, GroupLayout.PREFERRED_SIZE, 176, GroupLayout.PREFERRED_SIZE))
+		);
+		gl_panelBuyCond.setVerticalGroup(
+			gl_panelBuyCond.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelBuyCond.createSequentialGroup()
+					.addComponent(scrollPaneBuyCond, GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnBuyCond, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE))
+		);
+		
+		tableBuyCond = new JTable(rfpData, columnNames);
+		scrollPaneBuyCond.setViewportView(tableBuyCond);
+		panelBuyCond.setLayout(gl_panelBuyCond);
+		
+		
+		
+		
+		// Buy Equip
+		JPanel panelBuyEquip = new JPanel();
+		tabbedPaneGuildHall.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=8 marginheight=5> Buy Equipments </body></html>", null, panelBuyEquip, null);
+		
+		JButton btnBuyEquip = new JButton("Buy Equipment");
+		
+		JScrollPane scrollPaneBuyEquip = new JScrollPane();
+		GroupLayout gl_panelBuyEquip = new GroupLayout(panelBuyEquip);
+		gl_panelBuyEquip.setHorizontalGroup(
+			gl_panelBuyEquip.createParallelGroup(Alignment.LEADING)
+				.addComponent(scrollPaneBuyEquip, GroupLayout.DEFAULT_SIZE, 556, Short.MAX_VALUE)
+				.addGroup(Alignment.TRAILING, gl_panelBuyEquip.createSequentialGroup()
+					.addContainerGap(382, Short.MAX_VALUE)
+					.addComponent(btnBuyEquip, GroupLayout.PREFERRED_SIZE, 174, GroupLayout.PREFERRED_SIZE))
+		);
+		gl_panelBuyEquip.setVerticalGroup(
+			gl_panelBuyEquip.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelBuyEquip.createSequentialGroup()
+					.addGap(0)
+					.addComponent(scrollPaneBuyEquip, GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnBuyEquip, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE))
+		);
+		
+		tableBuyEquip = new JTable(rfpData, columnNames);
+		scrollPaneBuyEquip.setViewportView(tableBuyEquip);
+		panelBuyEquip.setLayout(gl_panelBuyEquip);
+		
+		
+		// GROUP LAYOUT		
+		GroupLayout groupLayout = new GroupLayout(this);
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(tabbedPaneGuildHall, GroupLayout.PREFERRED_SIZE, 561, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addComponent(tabbedPaneGuildHall, GroupLayout.PREFERRED_SIZE, 326, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap())
+		);
+		setLayout(groupLayout);
+	}
+
+}

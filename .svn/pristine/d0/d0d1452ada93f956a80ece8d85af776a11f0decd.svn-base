@@ -1,0 +1,72 @@
+package team14.view;
+
+import javax.swing.JFrame;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JPanel;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JButton;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.LineBorder;
+
+import java.awt.Color;
+
+@SuppressWarnings("serial")
+public class GUIMain extends JFrame {
+	
+	public GUIMain() {
+		
+		JPanel panelMain = new JPanel();
+		panelMain.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		
+		JPanel panelMenu = new JPanel();
+		panelMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
+		GroupLayout groupLayout = new GroupLayout(getContentPane());
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(panelMenu, GroupLayout.PREFERRED_SIZE, 86, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(panelMain, GroupLayout.PREFERRED_SIZE, 597, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap())
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(102)
+					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+						.addComponent(panelMenu, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
+						.addComponent(panelMain, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE))
+					.addContainerGap())
+		);
+		
+		JButton btnMenuTroop = new JButton("Manage Troops");
+		btnMenuTroop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		panelMenu.add(btnMenuTroop);
+		
+		JButton btnMenuStrategy = new JButton("Strategies");
+		btnMenuStrategy.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		panelMenu.add(btnMenuStrategy);
+		
+		JButton btnMenuGuildhall = new JButton("Guild Hall");
+		panelMenu.add(btnMenuGuildhall);
+		
+		JButton btnNewButton = new JButton("Tournaments");
+		panelMenu.add(btnNewButton);
+		getContentPane().setLayout(groupLayout);
+		//this is crystal! do you see my this??
+	}
+}

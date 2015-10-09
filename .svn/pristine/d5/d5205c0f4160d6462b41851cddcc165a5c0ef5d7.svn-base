@@ -1,0 +1,536 @@
+package team14.view;
+
+import javax.swing.JPanel;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+
+import java.awt.ScrollPane;
+
+import javax.swing.JTabbedPane;
+
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+
+import javax.swing.JTable;
+
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.BevelBorder;
+
+import java.awt.GridLayout;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import javax.swing.border.EtchedBorder;
+
+import team14.controller.WarForecasterDB;
+import team14.model.ComboItem;
+import team14.model.Equipment;
+import team14.model.StSquad;
+import team14.model.StStrategy;
+import team14.model.StUnit;
+import team14.model.Strategist;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JButton;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Font;
+
+import javax.swing.SwingConstants;
+
+@SuppressWarnings("serial")
+public class UnitPanel extends JPanel {
+	
+	private GUI myGUI;
+	
+	private JComboBox comboBoxEquip;
+	
+	private JComboBox comboBoxStrategy;
+	
+	private JComboBox comboBoxSquad;
+	
+	private JTable tableUnits;
+	
+	private JTextPane textPaneDesc;
+	
+	private JTextPane textPaneBoost;
+	
+	private JButton btnSetup;
+	
+	private WarForecasterDB db;	
+	
+	private List<StUnit> list;
+	private List<StSquad> squadlist;
+	private List<StStrategy> stratlist;	
+	private List<Equipment> equiplist;
+	private List<StSquad> sqlist;
+	
+	private StStrategy selectedStrat;
+	private Equipment selectedEquip;
+	private StSquad selectedSquad;
+	
+	private ComboItem itemNone;
+	
+	private Object[][] data;
+	
+	private Strategist strategist;
+	private JTable tableSquadList;
+	private JScrollPane scrollPane;
+	private JComboBox comboBoxPos;
+	
+	public UnitPanel(GUI aGUI, Strategist aStrategist, WarForecasterDB adb) {	
+		strategist = aStrategist;
+		db = adb;
+		myGUI = aGUI;
+		
+		buildUnitPanel();
+	}
+	
+	private void buildUnitPanel() {
+		
+		setBorder(null);
+		
+		JTabbedPane tabbedPaneUnit = new JTabbedPane(JTabbedPane.TOP);
+		
+		JPanel panelUnitEditor = new JPanel();
+		tabbedPaneUnit.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5> Unit Editor </body></html>", null, panelUnitEditor, "Cabbage");
+
+		JPanel panelSquadEditor = new JPanel();
+		tabbedPaneUnit.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5> Squad Editor </body></html>", null, panelSquadEditor, null);		
+		
+		scrollPane = new JScrollPane();
+		
+		comboBoxPos = new JComboBox();
+		comboBoxPos.addItem("None");
+		for(int x = 1; x < 10 ; x = x+1) {
+			comboBoxPos.addItem("Position " + x);
+		}
+		comboBoxPos.setEnabled(false);
+		
+		comboBoxPos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFrame frame = new JFrame("MSG UPDATE");
+				
+				boolean updateIt = false;
+				for (int x=0; x < 5; x++) {
+					if ((int)tableSquadList.getValueAt(x, 3) != comboBoxPos.getSelectedIndex() ||
+							comboBoxPos.getSelectedIndex() == 0 ||
+							tableSquadList.getSelectedRow() == x) 
+						updateIt = true;	
+					else {
+						updateIt = false;
+						JOptionPane.showMessageDialog(frame,
+								tableSquadList.getValueAt(x, 1) + 
+								" is already on that Position",
+						        "Field Assignment Failure",
+						        JOptionPane.INFORMATION_MESSAGE);
+						comboBoxPos.setSelectedIndex((int) tableSquadList.getValueAt(tableSquadList.getSelectedRow(), 3));
+					}
+				}
+				
+				if (updateIt) {
+					try {
+						db.updateFieldPosition(comboBoxPos.getSelectedIndex(), 
+								(String) tableSquadList.getValueAt(tableSquadList.getSelectedRow(), 1), 
+								strategist.getID());
+						tableSquadList.setValueAt(comboBoxPos.getSelectedIndex(), tableSquadList.getSelectedRow(), 3);
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+		
+		
+		GroupLayout gl_panelSquadEditor = new GroupLayout(panelSquadEditor);
+		gl_panelSquadEditor.setHorizontalGroup(
+			gl_panelSquadEditor.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_panelSquadEditor.createSequentialGroup()
+					.addContainerGap(209, Short.MAX_VALUE)
+					.addGroup(gl_panelSquadEditor.createParallelGroup(Alignment.LEADING)
+						.addComponent(comboBoxPos, GroupLayout.PREFERRED_SIZE, 144, GroupLayout.PREFERRED_SIZE)
+						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE))
+					.addGap(202))
+		);
+		gl_panelSquadEditor.setVerticalGroup(
+			gl_panelSquadEditor.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelSquadEditor.createSequentialGroup()
+					.addGap(62)
+					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 112, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(comboBoxPos, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(88, Short.MAX_VALUE))
+		);
+		
+		
+		String[] columnSquad = {"", "Name", "", ""};
+		try
+		{
+			sqlist = db.getStSquadList(strategist.getID());
+						
+			data = new Object[sqlist.size()-1][columnSquad.length];
+			for (int i=0; i<sqlist.size()-1; i++) {
+				data[i][0] = sqlist.get(i+1).getID();
+				data[i][1] = sqlist.get(i+1).getName();
+				data[i][2] = sqlist.get(i+1).getStrategistID();
+				data[i][3] = sqlist.get(i+1).getFieldPosition();
+				
+			}		
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		tableSquadList = new JTable(data, columnSquad);
+		//tableSquadList = new JTable();
+		
+		
+		tableSquadList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				comboBoxPos.setEnabled(true);
+				
+				comboBoxPos.setSelectedIndex((int) tableSquadList.getValueAt(tableSquadList.getSelectedRow(), 3));
+
+				
+			}
+		});
+		
+		
+		scrollPane.setViewportView(tableSquadList);
+		tableSquadList.getColumnModel().getColumn(0).setMinWidth(0);
+		tableSquadList.getColumnModel().getColumn(0).setMaxWidth(0);
+		tableSquadList.getColumnModel().getColumn(2).setMinWidth(0);
+		tableSquadList.getColumnModel().getColumn(2).setMaxWidth(0);
+		tableSquadList.getColumnModel().getColumn(3).setMinWidth(0);
+		tableSquadList.getColumnModel().getColumn(3).setMaxWidth(0);
+		panelSquadEditor.setLayout(gl_panelSquadEditor);
+		
+		GridBagLayout gbl_panelUnitEditor = new GridBagLayout();
+		gbl_panelUnitEditor.columnWidths = new int[]{387, 170, 0};
+		gbl_panelUnitEditor.rowHeights = new int[]{0, 0};
+		gbl_panelUnitEditor.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		gbl_panelUnitEditor.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+		panelUnitEditor.setLayout(gbl_panelUnitEditor);
+		
+		JScrollPane scrollPaneTable = new JScrollPane();
+		GridBagConstraints gbc_scrollPaneTable = new GridBagConstraints();
+		gbc_scrollPaneTable.insets = new Insets(0, 0, 0, 5);
+		gbc_scrollPaneTable.fill = GridBagConstraints.BOTH;
+		gbc_scrollPaneTable.gridx = 0;
+		gbc_scrollPaneTable.gridy = 0;
+		panelUnitEditor.add(scrollPaneTable, gbc_scrollPaneTable);
+		
+		
+		String[] columnNames = {"", "Name", "Class", "Rank", "HP", "Atk", "Def", "Spd", "","","","",};
+			
+		try
+		{
+			list = db.getStUnits(strategist.getID());
+			
+			data = new Object[list.size()][columnNames.length];
+			for (int i=0; i<list.size(); i++) {
+				data[i][0] = list.get(i).getID();
+				data[i][1] = list.get(i).getName();
+				data[i][2] = list.get(i).getUnitClass();
+				data[i][3] = list.get(i).getRank();
+				data[i][4] = list.get(i).getHP();
+				data[i][5] = list.get(i).getAtk();
+				data[i][6] = list.get(i).getDef();
+				data[i][7] = list.get(i).getSpd();
+				data[i][8] = list.get(i).getSquadID();
+				data[i][9] = list.get(i).getEquipID();
+				data[i][10] = list.get(i).getStratID();
+				data[i][11] = list.get(i).getDescription();
+				
+			}
+			
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		
+		
+		
+		tableUnits = new JTable(data, columnNames);
+		tableUnits.getColumnModel().getColumn(0).setMinWidth(0);
+		tableUnits.getColumnModel().getColumn(0).setMaxWidth(0);
+		tableUnits.getColumnModel().getColumn(8).setMinWidth(0);
+		tableUnits.getColumnModel().getColumn(8).setMaxWidth(0);
+		tableUnits.getColumnModel().getColumn(9).setMinWidth(0);
+		tableUnits.getColumnModel().getColumn(9).setMaxWidth(0);
+		tableUnits.getColumnModel().getColumn(10).setMinWidth(0);
+		tableUnits.getColumnModel().getColumn(10).setMaxWidth(0);
+		tableUnits.getColumnModel().getColumn(11).setMinWidth(0);
+		tableUnits.getColumnModel().getColumn(11).setMaxWidth(0);
+		scrollPaneTable.setViewportView(tableUnits);
+		
+		JPanel panelUnitStatus = new JPanel();
+		panelUnitStatus.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
+		GridBagConstraints gbc_panelUnitStatus = new GridBagConstraints();
+		gbc_panelUnitStatus.fill = GridBagConstraints.BOTH;
+		gbc_panelUnitStatus.gridx = 1;
+		gbc_panelUnitStatus.gridy = 0;
+		panelUnitEditor.add(panelUnitStatus, gbc_panelUnitStatus);
+		
+		comboBoxEquip = new JComboBox();
+		
+		itemNone = new ComboItem("None", -1);
+		
+		try {
+			equiplist = db.getGuildHallEquipment();
+			comboBoxEquip.addItem(itemNone);
+			for(Equipment e: equiplist) {
+				comboBoxEquip.addItem(new ComboItem(e.getName(), e.getID()));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		comboBoxEquip.setSelectedIndex(-1);
+		
+		
+		comboBoxStrategy = new JComboBox();
+		try {
+			stratlist = db.getStStrategyList(strategist.getID());
+			comboBoxStrategy.addItem(itemNone);
+			for(StStrategy st: stratlist) {
+				comboBoxStrategy.addItem(new ComboItem(st.getName(), st.getID()));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		comboBoxStrategy.setSelectedIndex(-1);
+		
+		
+		comboBoxSquad = new JComboBox();
+		try {
+			squadlist = db.getStSquadList(strategist.getID());;
+			for(StSquad sq: squadlist) {
+				comboBoxSquad.addItem(new ComboItem(sq.getName(), sq.getID()));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		comboBoxSquad.setSelectedIndex(-1);
+		
+		textPaneDesc = new JTextPane();
+		textPaneDesc.setEditable(false);
+		
+		btnSetup = new JButton("Setup");
+		btnSetup.setEnabled(false);
+		
+		// ACTIONS
+		tableUnits.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				btnSetup.setEnabled(true);
+				textPaneDesc.setText("" + tableUnits.getValueAt(tableUnits.getSelectedRow(), 11));
+				
+				try {
+					int itemid1 = (int) tableUnits.getValueAt(tableUnits.getSelectedRow(), 9);
+					if (itemid1 > 0) {
+						selectedEquip = db.getEquipment(itemid1);
+						ComboItem citem1 = new ComboItem(selectedEquip.getName(), selectedEquip.getID());
+						comboBoxEquip.setSelectedItem(citem1);
+					} else {
+						comboBoxEquip.setSelectedItem(itemNone);
+						selectedEquip = null;
+					}
+					
+					
+					int itemid2 = (int) tableUnits.getValueAt(tableUnits.getSelectedRow(), 10);
+					if (itemid2 > 0) {
+						selectedStrat = db.getStStrategy(strategist.getID(), itemid2);
+						ComboItem citem2 = new ComboItem(selectedStrat.getName(), selectedStrat.getID());
+						comboBoxStrategy.setSelectedItem(citem2);
+					} else {
+						comboBoxStrategy.setSelectedItem(itemNone);
+						selectedStrat = null;
+					}
+					
+					int itemid3 = (int) tableUnits.getValueAt(tableUnits.getSelectedRow(), 8);
+					if (itemid3 > 0) {
+						selectedSquad = db.getStSquad(strategist.getID(), itemid3);
+						ComboItem citem3 = new ComboItem(selectedSquad.getName(), selectedSquad.getID());
+						comboBoxSquad.setSelectedItem(citem3);
+					} else {
+						comboBoxSquad.setSelectedItem(itemNone);
+						selectedSquad = null;
+					}
+					
+					comboBoxEquip.revalidate();
+					comboBoxStrategy.revalidate();
+					comboBoxSquad.revalidate();
+					
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		comboBoxEquip.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Object item = comboBoxEquip.getSelectedItem();
+				int id = ((ComboItem)item).getValue(); // ID
+				try {
+					if (id == -1) {
+						selectedEquip = null;
+						textPaneBoost.setText("");
+					}
+					else {
+						selectedEquip = db.getEquipment(id);
+						textPaneBoost.setText(selectedEquip.getBoost());
+					}
+				
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}							
+			}
+		});
+		
+		comboBoxStrategy.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Object item = comboBoxStrategy.getSelectedItem();
+				int id = ((ComboItem)item).getValue(); // ID
+				try {
+					if (id == -1)
+						selectedStrat = null;
+					else
+						selectedStrat = db.getStStrategy(strategist.getID(), id);
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+
+			}
+		});
+		
+		comboBoxSquad.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Object item = comboBoxSquad.getSelectedItem();
+				int id = ((ComboItem)item).getValue(); // ID
+				try {
+					if (id == -1)
+						selectedSquad = null;
+					else
+						selectedSquad = db.getStSquad(strategist.getID(), id);
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+
+			}
+		});
+		
+		btnSetup.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			
+				int stratid = -1;
+				if (selectedStrat == null) stratid = -1;
+				else stratid = selectedStrat.getID();
+				
+				int equipid = -1;
+				if (selectedEquip == null) equipid = -1;
+				else equipid = selectedEquip.getID();
+				
+				tableUnits.setValueAt(selectedSquad.getID(), tableUnits.getSelectedRow(), 8);
+				tableUnits.setValueAt(equipid, tableUnits.getSelectedRow(), 9);
+				tableUnits.setValueAt(stratid, tableUnits.getSelectedRow(), 10);
+				
+				comboBoxEquip.revalidate();
+				comboBoxStrategy.revalidate();
+				comboBoxSquad.revalidate();
+				
+				try {
+					db.updateStUnits(strategist.getID(), (int) tableUnits.getValueAt(tableUnits.getSelectedRow(), 0), 
+							selectedSquad.getID(), stratid, equipid);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		textPaneBoost = new JTextPane();
+		textPaneBoost.setEditable(false);
+		
+		JLabel lblBoost = new JLabel("Boost");
+		lblBoost.setHorizontalAlignment(SwingConstants.LEFT);
+		lblBoost.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		
+		JLabel label = new JLabel("Description");
+		label.setHorizontalAlignment(SwingConstants.LEFT);
+		label.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		
+		// LAYOUTS
+		
+
+		
+		GroupLayout gl_panelUnitStatus = new GroupLayout(panelUnitStatus);
+		gl_panelUnitStatus.setHorizontalGroup(
+			gl_panelUnitStatus.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelUnitStatus.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelUnitStatus.createParallelGroup(Alignment.LEADING)
+						.addComponent(textPaneBoost, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
+						.addComponent(lblBoost, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnSetup, GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
+						.addComponent(textPaneDesc, GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
+						.addComponent(label, GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
+						.addComponent(comboBoxSquad, 0, 124, Short.MAX_VALUE)
+						.addComponent(comboBoxStrategy, 0, 124, Short.MAX_VALUE)
+						.addComponent(comboBoxEquip, 0, 124, Short.MAX_VALUE))
+					.addContainerGap())
+		);
+		gl_panelUnitStatus.setVerticalGroup(
+			gl_panelUnitStatus.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelUnitStatus.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(lblBoost, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addComponent(textPaneBoost, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(comboBoxEquip, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(comboBoxStrategy, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(comboBoxSquad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(label, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(textPaneDesc, GroupLayout.PREFERRED_SIZE, 59, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnSetup, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+					.addGap(36))
+		);
+		panelUnitStatus.setLayout(gl_panelUnitStatus);
+		
+		GroupLayout groupLayout = new GroupLayout(this);
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(tabbedPaneUnit, GroupLayout.PREFERRED_SIZE, 561, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addComponent(tabbedPaneUnit, GroupLayout.PREFERRED_SIZE, 326, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap())
+		);
+		setLayout(groupLayout);
+	}
+}

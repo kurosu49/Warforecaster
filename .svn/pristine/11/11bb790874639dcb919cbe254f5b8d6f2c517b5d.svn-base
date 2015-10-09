@@ -1,0 +1,12 @@
+package team14.model;
+
+public class Condition {
+	
+	private String name, modifier;
+	private int price; 
+	
+	public Condition() {
+		
+	}
+	
+}

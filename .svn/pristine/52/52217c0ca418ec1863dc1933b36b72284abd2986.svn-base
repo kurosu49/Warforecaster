@@ -1,0 +1,80 @@
+package team14.model;
+
+/**
+ * Condition class
+ * @author mirafcry
+ * @version 11/24/14
+ *
+ */
+public class ConditionGH {
+	
+	private String modifier;
+	private int id, price; 
+	
+	/**
+	 * Creates new Condition.
+	 * @param modifier
+	 * @param price
+	 * @throws IllegalArgumentException if modifier is invalid and/or price is less than 0.
+	 */
+	public ConditionGH(int id, String modifier, int price) {
+		setID(id);
+		setModifier(modifier);
+		setPrice(price);
+	}
+	
+	@Override
+	public String toString() {
+		return "Condition[id=" + getID() +  ", modifier=" + getModifier() + ", price=" + getPrice() + "]";
+	}
+	
+	public int getID() {
+		return id;
+	}
+	
+	private void setID(int id) {
+		if(id < 0) {
+			throw new IllegalArgumentException("Please enter a valid ID.");
+		}
+		this.id = id;
+	}
+	
+	/**
+	 * Returns modifier.
+	 * @return modifier
+	 */
+	public String getModifier() {
+		return modifier;
+	}
+	
+	/**
+	 * Modifies modifier for the Condition.
+	 * @param modifier
+	 */
+	public void setModifier(String modifier) {
+		if(modifier == null || modifier.length() == 0) {
+			throw new IllegalArgumentException("Please supply valid modifier.");
+		}
+		this.modifier = modifier;
+	}
+	
+	/**
+	 * Returns price.
+	 * @return price.
+	 */
+	public int getPrice() {
+		return price;
+	}
+	
+	/**
+	 * Modifies price for the Condition.
+	 * @param price
+	 */
+	public void setPrice(int price) {
+		if(price < 0) {
+			throw new IllegalArgumentException("Please supply a price greater than or equal to 0");
+		}
+		this.price = price;
+	}
+	
+}

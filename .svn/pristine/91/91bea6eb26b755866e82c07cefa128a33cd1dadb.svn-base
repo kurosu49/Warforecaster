@@ -1,0 +1,29 @@
+package team14.model;
+
+
+import java.sql.SQLException;
+import java.util.List;
+
+import team14.controller.WarForecasterDB;
+
+public class Test {
+
+	public static void main(String args[]) throws SQLException {
+		WarForecasterDB db = new WarForecasterDB();
+		System.out.println("-----Getting GH Units-----");
+		
+		//testing out getGuildHallUnits
+		List<Unit> list = db.getGuildHallUnits();
+		for(Unit unit: list) {
+			System.out.println(unit.getName());
+		}
+		
+		System.out.println("-----Getting GH Strategies-----");
+		
+		//testing out getGuildHallStrategies
+		List<Strategy> list2 = db.getGuildHallStrategies();
+		for(Strategy strtgy: list2) {
+			System.out.println(strtgy.getName());		}
+		 
+	}
+}

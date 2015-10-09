@@ -1,0 +1,67 @@
+package team14.view;
+
+import javax.swing.JPanel;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.LayoutStyle.ComponentPlacement;
+
+@SuppressWarnings("serial")
+public class StrategistPanel extends JPanel {
+	
+	private GUI myGUI;
+	
+	public StrategistPanel(GUI aGUI) {
+		myGUI = aGUI;
+		
+		JLabel lblStrategistName = new JLabel("Name");
+		lblStrategistName.setFont(new Font("DejaVu Serif Condensed", Font.PLAIN, 27));
+		
+		JLabel lblLevel = new JLabel("Level");
+		lblLevel.setFont(new Font("DejaVu Serif Condensed", Font.PLAIN, 20));
+		
+		JLabel lblExp = new JLabel("Exp");
+		lblExp.setFont(new Font("DejaVu Serif Condensed", Font.PLAIN, 20));
+		
+		JLabel lblBalance = new JLabel("Balance");
+		lblBalance.setFont(new Font("DejaVu Serif Condensed", Font.PLAIN, 20));
+		
+		JLabel lblTournamentJoined = new JLabel("Tournament He Joined");
+		lblTournamentJoined.setFont(new Font("DejaVu Serif Condensed", Font.PLAIN, 20));
+		
+		GroupLayout groupLayout = new GroupLayout(this);
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+					.addContainerGap(124, Short.MAX_VALUE)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblTournamentJoined, GroupLayout.PREFERRED_SIZE, 340, GroupLayout.PREFERRED_SIZE)
+						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+							.addComponent(lblStrategistName)
+							.addComponent(lblExp, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(lblLevel, GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+							.addComponent(lblBalance)))
+					.addGap(117))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(70)
+					.addComponent(lblStrategistName)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblLevel, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblExp, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblBalance, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblTournamentJoined, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(89, Short.MAX_VALUE))
+		);
+		setLayout(groupLayout);
+		
+	}
+	
+
+}

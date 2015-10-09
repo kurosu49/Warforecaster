@@ -1,0 +1,82 @@
+package team14.model;
+
+public class Strategist {
+	
+	private String name, username, password;
+	private int level, exp, balance;
+	
+	/**
+	 * Constructor
+	 */
+	public Strategist(String name, String username, String password, int level,
+			int exp, int balance) {
+		
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		if(name == null || name.length() == 0) {
+			throw new IllegalArgumentException("Please supply a valid name.");
+		}
+		this.name = name;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
+	
+	public void setUsername(String username) {
+		if(username == null || username.length() == 0) {
+			throw new IllegalArgumentException("Please supply a valid username.");
+		}
+		this.username = username;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	public void setPassword(String password) {
+		if(password == null || password.length() == 0) {
+			throw new IllegalArgumentException("Please supply a valid password");
+		}
+		this.password = password;
+	}
+	
+	public int getLevel() {
+		return level;
+	}
+	
+	public void setLevel(int level) {
+		if(level < 0) {
+			throw new IllegalArgumentException("Please supply a level greater than or equal to 0.");
+		}
+		this.level = level;
+	}
+	
+	public int getExp() {
+		return exp;
+	}
+	
+	public void setExp(int exp) {
+		if(exp < 0) {
+			throw new IllegalArgumentException("Please supply an exp value greater than or equal to 0.");
+		}
+		this.exp = exp;
+	}
+	
+	public int getBalance() {
+		return balance;
+	}
+	
+	public void setBalance(int balance) {
+		if(balance < 0) {
+			throw new IllegalArgumentException("Please supply a balance greater than or equal to 0.");
+		}
+		this.balance = balance;
+	}
+
+}

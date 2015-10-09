@@ -1,0 +1,285 @@
+package team14.controller;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import team14.model.Condition;
+import team14.model.Equipment;
+import team14.model.Strategist;
+import team14.model.Strategy;
+import team14.model.Tournament;
+import team14.model.Unit;
+
+/**
+ * Connection to WarForecaster Database
+ * 
+ * @author mirafcry, kjudoy
+ * @version 11/27/14
+ *
+ */
+public class WarForecasterDB {
+	//fields for connection
+	private static String username = "_445team14";
+	private static String password = "reypp!";
+	private static String serverName = "cssgate.insttech.washington.edu/_445team14";
+	private static Connection conn;
+	
+	//date format for deadline for tournaments
+	private static DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+	
+	//lists
+	private List<Unit> ghUnitsList;
+	private List<Strategy> ghStrategyList;
+	private List<Equipment> ghEquipmentList;
+	private List<Condition> ghConditionList;
+	private List<Tournament> ghTournamentList;
+	private List<Strategist> strategistList;
+	
+	//item
+	private Strategist strategist;
+	
+	/**
+	 * Creates the connection to the database
+	 * @throws SQLException
+	 */
+	public static void createConnection() throws SQLException {
+		conn = DriverManager.getConnection("jdbc:" + "mysql" + "://"
+				+ serverName, username, password);
+		//System.out.println("Successfully Connected");
+	}
+	
+	/**
+	 * Creates a list of the guild hall units
+	 * @return list of guild hall units in the database
+	 * @throws SQLException
+	 */
+	public List<Unit> getGuildHallUnits() throws SQLException {
+		if(conn == null) {
+			createConnection();
+		}
+		Statement stmt = null;
+		String query = "SELECT * FROM GuildHallUnit";
+		
+		ghUnitsList = new ArrayList<Unit>();
+		try {
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				String name = rs.getString("guildhallunitName");
+				String uClass = rs.getString("guildhallunitClass");
+				int rank = rs.getInt("guildhallunitRank");
+				int exp = rs.getInt("guildhallunitExp");
+				int hp = rs.getInt("guildhallunitHP");
+				int atk = rs.getInt("guildhallunitAtk");
+				int def = rs.getInt("guildhallunitDef");
+				int spd = rs.getInt("guildhallunitSpd");
+				String des = rs.getString("guildhallunitDescription");
+				int price = rs.getInt("guildhallunitPrice");
+				
+				Unit unit = new Unit(name, uClass, rank, exp, hp, atk, def, spd, des, price);
+				ghUnitsList.add(unit);				
+			}
+		} finally {
+			stmt.close();
+		}
+		return ghUnitsList;
+	}
+	
+	/**
+	 * Creates a List of the guild hall strategies
+	 * @return list of guild hall strategies in the database
+	 * @throws SQLException
+	 */
+	public List<Strategy> getGuildHallStrategies() throws SQLException {
+		if(conn == null) {
+			createConnection();
+		}
+		Statement stmt = null;
+		String query = "SELECT * FROM GuildHallStrategy";
+		
+		ghStrategyList = new ArrayList<Strategy>();
+		try {
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				String name = rs.getString("guildhallstrategyName");
+				String action = rs.getString("guildhallstrategyAction");
+				String effect = rs.getString("guildhallstrategyEffect");
+				String des = rs.getString("guildhallstrategyDescription");
+				int price = rs.getInt("guildhallstrategyPrice");
+				
+				Strategy strtgy = new Strategy(name, action, effect, des, price);
+				ghStrategyList.add(strtgy);				
+			}
+		} finally {
+			stmt.close();
+		}
+		return ghStrategyList;
+		
+	}
+	
+	/**
+	 * Creates a list of guild hall equipment
+	 * @return list of guild hall equipment in the database
+	 * @throws SQLException
+	 */
+	public List<Equipment> getGuildHallEquipment() throws SQLException {
+		if(conn == null) {
+			createConnection();
+		}
+		Statement stmt = null;
+		String query = "SELECT * FROM GuildHallEquipment";
+		
+		ghEquipmentList = new ArrayList<Equipment>();
+		try {
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				String name = rs.getString("guildhallequipmentName");
+				String boost = rs.getString("guildhallequipmentBoost");
+				String des = rs.getString("guildhallequipmentDescription");
+				int price = rs.getInt("guildhallequipmentPrice");
+				
+				Equipment eqpmt = new Equipment(name, boost, des, price);
+				ghEquipmentList.add(eqpmt);				
+			}
+		} finally {
+			stmt.close();
+		}
+		return ghEquipmentList;
+		
+	}
+	
+	/**
+	 * Creates a list of guild hall conditions
+	 * @return list of guild hall conditions in the database
+	 * @throws SQLException
+	 */
+	public List<Condition> getGuildHallConditions() throws SQLException {
+		if(conn == null) {
+			createConnection();
+		}
+		Statement stmt = null;
+		String query = "SELECT * FROM GuildHallCondition";
+		
+		ghConditionList = new ArrayList<Condition>();
+		try {
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				String mod = rs.getString("guildhallconditionModifier");
+				int price = rs.getInt("guildhallconditionPrice");
+				
+				Condition cond = new Condition(mod, price);
+				ghConditionList.add(cond);				
+			}
+		} finally {
+			stmt.close();
+		}
+		return ghConditionList;
+	}
+	
+	/**
+	 * Creates a list of tournaments
+	 * @return list of tournaments in the database
+	 * @throws SQLException
+	 */
+	public List<Tournament> getTournaments() throws SQLException {
+		if(conn == null) {
+			createConnection();
+		}
+		Statement stmt = null;
+		String query = "SELECT * FROM Tournament";
+		
+		ghTournamentList = new ArrayList<Tournament>();
+		try {
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				String name = rs.getString("tournamentName");
+				String deadline = df.format(rs.getDate("tournamentDeadline"));
+				String status = rs.getString("tournamentStatus");
+				
+				Tournament tourney = new Tournament(name, deadline, status);
+				ghTournamentList.add(tourney);				
+			}
+		} finally {
+			stmt.close();
+		}		
+		return ghTournamentList;
+		
+	}
+	
+	/**
+	 * Creates a list of tournaments
+	 * @return list of tournaments in the database
+	 * @throws SQLException
+	 */
+	public List<Strategist> getStrategists() throws SQLException {
+		if(conn == null) {
+			createConnection();
+		}
+		Statement stmt = null;
+		String query = "SELECT * FROM Strategist";
+		
+		strategistList = new ArrayList<Strategist>();
+		try {
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				String name = rs.getString("strategistName");
+				String user = rs.getString("strategistUsername");
+				String pass = rs.getString("strategistPassword");
+				int level = rs.getInt("strategistLevel");
+				int exp = rs.getInt("strategistExp");
+				int balance = rs.getInt("strategistBalance");
+				
+				Strategist stratman = new Strategist(name, user, pass, level,
+						exp, balance);
+				strategistList.add(stratman);				
+			}
+		} finally {
+			stmt.close();
+		}		
+		return strategistList;
+		
+	}
+	
+	public Strategist getStrategist(String username) throws SQLException {
+		if(conn == null) {
+			createConnection();
+		}
+		Statement stmt = null;
+		String query = "SELECT * FROM Strategist WHERE strategistUsername = '" + username +"'";
+		
+		try {
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				String name = rs.getString("strategistName");
+				String user = rs.getString("strategistUsername");
+				String pass = rs.getString("strategistPassword");
+				int level = rs.getInt("strategistLevel");
+				int exp = rs.getInt("strategistExp");
+				int balance = rs.getInt("strategistBalance");
+				
+				Strategist stratman = new Strategist(name, user, pass, level,
+						exp, balance);
+				strategist = stratman;
+			}
+		} finally {
+			stmt.close();
+		}		
+		return strategist;		
+	}
+}

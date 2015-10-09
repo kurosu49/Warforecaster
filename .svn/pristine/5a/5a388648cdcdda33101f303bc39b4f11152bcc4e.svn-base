@@ -1,0 +1,91 @@
+package team14.controller;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import team14.model.Condition;
+import team14.model.Equipment;
+import team14.model.Strategy;
+import team14.model.Tournament;
+import team14.model.Unit;
+
+/**
+ * Connection to WarForecaster Database
+ * 
+ * @author mirafcry, kjudoy
+ * @version 11/27/14
+ *
+ */
+public class WarForecasterDB {
+	//fields for connection
+	private static String username = "_445team14";
+	private static String password = "reypp!";
+	private static String serverName = "cssgate.insttech.washington.edu/_445team14";
+	private static Connection conn;
+	
+	//fields we might need ???
+	private List<Unit> ghUnitsList;
+	private List<Strategy> ghStrategyList;
+	private List<Equipment> ghEquipmentList;
+	private List<Condition> ghConditionList;
+	private List<Tournament> ghTournamentList;
+	
+	//Testing queries and connection here
+	public static void main(String args[]) throws SQLException {
+		createConnection(); //connect to database
+		//test this query
+		System.out.println("-------Test 1-------");
+		String testQuery = "SELECT * FROM GuildHallUnit;";
+		Statement stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery(testQuery);
+		while(rs.next()) {
+				System.out.println("Name: " + rs.getString("guildhallunitName"));
+		}
+	
+		System.out.println("-------Test 2-------");
+		
+		PreparedStatement stmt2 = conn.prepareStatement("SELECT * FROM GuildHallEquipment");
+		rs = stmt2.executeQuery();
+		while(rs.next()) {
+			System.out.println("Name: " + rs.getString("guildhallequipmentName") + ", Boost: " + rs.getString("guildhallequipmentBoost")
+					+ ", Description: " + rs.getString("guildhallequipmentDescription") + ", Price: " + rs.getString("guildhallequipmentPrice"));
+		}
+		
+	}
+	
+	public static void createConnection() throws SQLException {
+		conn = DriverManager.getConnection("jdbc:" + "mysql" + "://"
+				+ serverName, username, password);
+		System.out.println("Successfully Connected");
+	}
+	
+	public List<Unit> getGuildHallUnits() throws SQLException {
+		if(conn == null) {
+			createConnection();
+		}
+		Statement stmt = null;
+		String query = "SELECT * FROM GuildHallUnit";
+		
+		ghUnitsList = new ArrayList<Unit>();
+		try {
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()) {
+				
+			}
+		} finally {
+			stmt.close();
+		}
+		return ghUnitsList;
+		
+	}
+	
+	
+}

@@ -1,0 +1,159 @@
+package team14.view;
+
+import javax.swing.JPanel;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JLabel;
+
+import java.awt.Font;
+import java.sql.SQLException;
+
+import javax.swing.LayoutStyle.ComponentPlacement;
+
+import team14.controller.WarForecasterDB;
+import team14.model.Strategist;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
+
+@SuppressWarnings("serial")
+public class StrategistPanel extends JPanel {
+	
+	private GUI myGUI;
+	
+	private Strategist strategist;
+	
+	private JLabel lblBalance;
+	private JLabel lblTournamentJoined;
+	
+	private WarForecasterDB db;
+	
+	public StrategistPanel(GUI aGUI, Strategist aStrategist, WarForecasterDB adb) {
+		db = adb;
+		strategist = aStrategist;
+		myGUI = aGUI;
+		
+		buildStrategistPanel();
+	}
+	
+	public void updatePanels() {		
+		try {
+			lblBalance = new JLabel("Balance: " + db.getRecentBalance(strategist.getID()));
+			lblBalance.revalidate();
+			lblBalance.repaint();
+			
+			if (db.getCurrentTournamentID(strategist.getID()) != 0) {
+				
+				lblTournamentJoined = new JLabel(db.getTournamentName(
+						db.getCurrentTournamentID(strategist.getID())).getName());
+				lblTournamentJoined.revalidate();
+				lblTournamentJoined.repaint();
+			} else {
+				lblTournamentJoined = new JLabel("------------");
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	private void buildStrategistPanel() {
+		
+		
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{50, 367, 70, 0};
+		gridBagLayout.rowHeights = new int[]{20, 204, 50, 0};
+		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 1.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{1.0, 0.0, 1.0, Double.MIN_VALUE};
+		setLayout(gridBagLayout);
+		
+		JPanel panel = new JPanel();
+		panel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		
+		lblTournamentJoined = null;
+		
+		try {
+			if (db.getCurrentTournamentID(strategist.getID()) != 0) {
+				
+				lblTournamentJoined = new JLabel(db.getTournamentName(
+						db.getCurrentTournamentID(strategist.getID())).getName());
+				lblTournamentJoined.revalidate();
+				lblTournamentJoined.repaint();
+			} else {
+				lblTournamentJoined = new JLabel("------------");
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+			
+		
+
+		JLabel lblStrategistName = new JLabel(strategist.getName());
+		lblStrategistName.setFont(new Font("DejaVu Serif Condensed",
+				Font.PLAIN, 27));
+
+		JLabel lblExp = new JLabel("Exp: " + strategist.getExp() + "/99999999");
+		lblExp.setFont(new Font("DejaVu Serif Condensed", Font.PLAIN, 20));
+
+		JLabel lblLevel = new JLabel("Level: " + strategist.getLevel());
+		lblLevel.setFont(new Font("DejaVu Serif Condensed", Font.PLAIN, 20));
+
+		lblBalance = null;
+		try {
+			lblBalance = new JLabel("Balance: " + db.getRecentBalance(strategist.getID()));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		lblBalance.setFont(new Font("DejaVu Serif Condensed", Font.PLAIN, 20));
+		
+		lblTournamentJoined.setFont(new Font("DejaVu Serif Condensed",
+				Font.PLAIN, 14));
+		
+		JLabel lblTournamentJoined_2 = new JLabel("Tournament Joined:");
+		lblTournamentJoined_2.setFont(new Font("DejaVu Serif Condensed", Font.PLAIN, 14));
+		
+		
+		
+		GroupLayout gl_panel = new GroupLayout(panel);
+		gl_panel.setHorizontalGroup(
+			gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblStrategistName)
+						.addComponent(lblLevel)
+						.addComponent(lblBalance)
+						.addComponent(lblExp)
+						.addComponent(lblTournamentJoined_2)
+						.addComponent(lblTournamentJoined))
+					.addContainerGap(268, Short.MAX_VALUE))
+		);
+		gl_panel.setVerticalGroup(
+			gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel.createSequentialGroup()
+					.addGap(19)
+					.addComponent(lblStrategistName)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblLevel)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblBalance)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblExp)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblTournamentJoined_2)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblTournamentJoined)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
+		panel.setLayout(gl_panel);
+		GridBagConstraints gbc_panel = new GridBagConstraints();
+		gbc_panel.insets = new Insets(0, 0, 5, 5);
+		gbc_panel.fill = GridBagConstraints.BOTH;
+		gbc_panel.gridx = 1;
+		gbc_panel.gridy = 1;
+		add(panel, gbc_panel);
+	}
+}

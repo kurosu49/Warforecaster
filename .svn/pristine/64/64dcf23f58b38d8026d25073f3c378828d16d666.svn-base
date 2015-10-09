@@ -1,0 +1,185 @@
+package team14.view;
+
+import javax.swing.JPanel;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import java.awt.GridBagLayout;
+import javax.swing.JScrollPane;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.JTextPane;
+import javax.swing.JComboBox;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import java.awt.Font;
+
+@SuppressWarnings("serial")
+public class StrategyPanel extends JPanel {
+	
+	private GUI myGUI;
+	
+	private JTable tableStrat;
+	
+	private JTextField txtCondValue;
+	
+	private JComboBox comboBoxCond;
+	
+	private JTextPane textPaneDescription;
+	
+	private JTextPane textPaneEffect;
+	
+	private JTextPane textPaneAction;
+	
+	public StrategyPanel(GUI aGUI) {
+		myGUI = aGUI;
+		
+		buildStategyPanel();
+	}
+	
+
+	
+	private void buildStategyPanel() {
+		
+		JPanel panelStratEditor = new JPanel();
+		GridBagLayout gbl_panelStratEditor = new GridBagLayout();
+		gbl_panelStratEditor.columnWidths = new int[]{245, 150, 0};
+		gbl_panelStratEditor.rowHeights = new int[]{0, 0};
+		gbl_panelStratEditor.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
+		gbl_panelStratEditor.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+		panelStratEditor.setLayout(gbl_panelStratEditor);
+		
+		JScrollPane scrollPaneStratEditor = new JScrollPane();
+		GridBagConstraints gbc_scrollPaneStratEditor = new GridBagConstraints();
+		gbc_scrollPaneStratEditor.fill = GridBagConstraints.BOTH;
+		gbc_scrollPaneStratEditor.insets = new Insets(0, 0, 0, 5);
+		gbc_scrollPaneStratEditor.gridx = 0;
+		gbc_scrollPaneStratEditor.gridy = 0;
+		panelStratEditor.add(scrollPaneStratEditor, gbc_scrollPaneStratEditor);
+		
+		
+		// Test Data
+		String[] columnNames = {"Strategy List"};
+		
+		Object[][] data = {
+				
+			    {"Double Echelon"}, 
+			    {"Forward Phalanx"}
+			    
+				};
+		
+		
+		
+		tableStrat = new JTable(data, columnNames);
+		scrollPaneStratEditor.setViewportView(tableStrat);
+
+		
+		JPanel panelStratStatus = new JPanel();
+		panelStratStatus.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
+		GridBagConstraints gbc_panelStratStatus = new GridBagConstraints();
+		gbc_panelStratStatus.fill = GridBagConstraints.BOTH;
+		gbc_panelStratStatus.gridx = 1;
+		gbc_panelStratStatus.gridy = 0;
+		panelStratEditor.add(panelStratStatus, gbc_panelStratStatus);
+		
+		textPaneEffect = new JTextPane();
+		textPaneEffect.setEditable(false);
+		
+		textPaneAction = new JTextPane();
+		textPaneAction.setEditable(false);
+		
+		comboBoxCond = new JComboBox();
+		
+		txtCondValue = new JTextField();
+		txtCondValue.setColumns(10);
+		
+		textPaneDescription = new JTextPane();
+		textPaneDescription.setEditable(false);
+		
+		JLabel lblAction = new JLabel("Action");
+		lblAction.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		lblAction.setHorizontalAlignment(SwingConstants.LEFT);
+		
+		JLabel lblEffect = new JLabel("Effect");
+		lblEffect.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		lblEffect.setHorizontalAlignment(SwingConstants.LEFT);
+		
+		JLabel lblDescription = new JLabel("Description");
+		lblDescription.setHorizontalAlignment(SwingConstants.LEFT);
+		lblDescription.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		
+		
+		
+		// Group Layout
+		GroupLayout groupLayout = new GroupLayout(this);
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(panelStratEditor, GroupLayout.PREFERRED_SIZE, 561, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(panelStratEditor, GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+		
+		GroupLayout gl_panelStratStatus = new GroupLayout(panelStratStatus);
+		gl_panelStratStatus.setHorizontalGroup(
+			gl_panelStratStatus.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelStratStatus.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelStratStatus.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelStratStatus.createSequentialGroup()
+							.addGroup(gl_panelStratStatus.createParallelGroup(Alignment.LEADING)
+								.addComponent(textPaneDescription, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+								.addGroup(Alignment.TRAILING, gl_panelStratStatus.createSequentialGroup()
+									.addGroup(gl_panelStratStatus.createParallelGroup(Alignment.LEADING)
+										.addComponent(lblAction, GroupLayout.PREFERRED_SIZE, 103, GroupLayout.PREFERRED_SIZE)
+										.addComponent(textPaneAction, GroupLayout.PREFERRED_SIZE, 103, GroupLayout.PREFERRED_SIZE))
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addGroup(gl_panelStratStatus.createParallelGroup(Alignment.TRAILING)
+										.addComponent(textPaneEffect, GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE)
+										.addComponent(lblEffect, GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)))
+								.addGroup(Alignment.TRAILING, gl_panelStratStatus.createSequentialGroup()
+									.addComponent(comboBoxCond, 0, 145, Short.MAX_VALUE)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(txtCondValue, GroupLayout.PREFERRED_SIZE, 61, GroupLayout.PREFERRED_SIZE)))
+							.addContainerGap())
+						.addGroup(gl_panelStratStatus.createSequentialGroup()
+							.addComponent(lblDescription, GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+							.addGap(4))))
+		);
+		gl_panelStratStatus.setVerticalGroup(
+			gl_panelStratStatus.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelStratStatus.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panelStratStatus.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblAction)
+						.addComponent(lblEffect))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panelStratStatus.createParallelGroup(Alignment.TRAILING)
+						.addComponent(textPaneEffect, GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
+						.addComponent(textPaneAction, GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_panelStratStatus.createParallelGroup(Alignment.BASELINE)
+						.addComponent(comboBoxCond, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtCondValue, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(lblDescription, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(textPaneDescription, GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+		panelStratStatus.setLayout(gl_panelStratStatus);
+		setLayout(groupLayout);
+	}
+
+}
